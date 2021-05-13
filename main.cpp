@@ -563,7 +563,7 @@ int main() {
 
 	const int number_of_cars = 10; // has to be even
 
-	cout << "Command > ";
+	cout << "Command (learn || #) >";
 
 	string command;
 
@@ -596,7 +596,7 @@ int main() {
 	}
 
 	string disp_str;
-	cout << "Display? ";
+	cout << "Display? (yes || no) >";
 	cin >> disp_str;
 
 	int number_of_races = 1000;
