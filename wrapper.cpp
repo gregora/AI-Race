@@ -47,7 +47,7 @@ void PhysicsObject::setAsCircle(b2CircleShape circle, float d, float f){
 }
 
 SDL_Texture* PhysicsObject::createTexture(std::string path, SDL_Renderer* renderer, float scalex, float scaley){
-	if (!renderer) return;
+	if (!renderer) return NULL;
 
 	texture_scalex = scalex;
 	texture_scaley = scaley;

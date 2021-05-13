@@ -91,7 +91,7 @@ std::vector<std::string> SplitString(std::string string, std::string split_by) {
 
 	std::vector<std::string> ret;
 
-	for (string.find(split_by) != std::string::npos) {
+	while (string.find(split_by) != std::string::npos) {
 		int spacepos = string.find(split_by);
 		ret.push_back(string.substr(0, spacepos));
 		string = string.substr(spacepos + split_by.size(), string.size());
@@ -305,7 +305,7 @@ class Car {
 
 			b2ContactEdge* ce = car -> body -> GetContactList();
 
-			for (ce != NULL) {
+			while (ce != NULL) {
 					if (ce -> contact -> IsTouching()) {
 						crashed = true;
 						// score = -1000;
