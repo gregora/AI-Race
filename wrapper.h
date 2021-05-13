@@ -14,30 +14,30 @@
 
 class PhysicsObject {
 
-  public:
+	public:
 
-    //texture stuff
-    SDL_Texture* texture = nullptr;
+		//texture stuff
+		SDL_Texture* texture = nullptr;
 
-    float texture_scalex = 1;
-    float texture_scaley = 1;
+		float texture_scalex = 1;
+		float texture_scaley = 1;
 
-    //box2d stuff
-    b2World * object_world = nullptr;
-    b2Body* body = nullptr;
+		//box2d stuff
+		b2World * object_world = nullptr;
+		b2Body* body = nullptr;
 
 
-    PhysicsObject(b2World *world, float x = 0.0f, float y = 0.0f, float w = 0.5f, float = 0.5f, float d = 1.0f, float f = 1.0f);
+		PhysicsObject(b2World *world, float x = 0.0f, float y = 0.0f, float w = 0.5f, float = 0.5f, float d = 1.0f, float f = 1.0f);
 
-    void setAsPolygon(b2PolygonShape polygon, float d = 1.0f, float f = 1.0f);
+		void setAsPolygon(b2PolygonShape polygon, float d = 1.0f, float f = 1.0f);
 
-    void setAsCircle(b2CircleShape circle, float d = 1.0f, float f = 1.0f);
+		void setAsCircle(b2CircleShape circle, float d = 1.0f, float f = 1.0f);
 
-    SDL_Texture* createTexture(std::string path, SDL_Renderer* renderer, float scalex = 1, float scaley = 1);
+		SDL_Texture* createTexture(std::string path, SDL_Renderer* renderer, float scalex = 1, float scaley = 1);
 
-    float *getPosition();
+		float *getPosition();
 
-    void setType(b2BodyType type);
+		void setType(b2BodyType type);
 
 
 };
@@ -45,53 +45,53 @@ class PhysicsObject {
 
 class DisplayTexture {
 
-  public:
+	public:
 
-    SDL_Texture* texture;
-    float texture_scalex = 1;
-    float texture_scaley = 1;
+		SDL_Texture* texture;
+		float texture_scalex = 1;
+		float texture_scaley = 1;
 
-    float x = 0;
-    float y = 0;
-    float rotation = 0.0f;
+		float x = 0;
+		float y = 0;
+		float rotation = 0.0f;
 
-    DisplayTexture(std::string path = "", SDL_Renderer* renderer = nullptr, float scalex = 1, float scaley = 1);
+		DisplayTexture(std::string path = "", SDL_Renderer* renderer = nullptr, float scalex = 1, float scaley = 1);
 
 };
 
 class Display {
 
-  public:
+	public:
 
-    SDL_Window *window;
-    SDL_Renderer* renderer = NULL;
+		SDL_Window *window;
+		SDL_Renderer* renderer = NULL;
 
-    int window_width;
-    int window_height;
-    float ppm;
+		int window_width;
+		int window_height;
+		float ppm;
 
-    float camerax = 0;
-    float cameray = 0;
+		float camerax = 0;
+		float cameray = 0;
 
-    bool fullscreen = false;
+		bool fullscreen = false;
 
-    std::vector<PhysicsObject*> objects;
-    std::vector<DisplayTexture*> background_textures;
-    std::vector<DisplayTexture*> foreground_textures;
+		std::vector<PhysicsObject*> objects;
+		std::vector<DisplayTexture*> background_textures;
+		std::vector<DisplayTexture*> foreground_textures;
 
-    Display(int w, int h, char title[], float pixelspermeter, bool create_window = true);
+		Display(int w, int h, char title[], float pixelspermeter, bool create_window = true);
 
-    void render(bool to_screen = true);
+		void render(bool to_screen = true);
 
-    void loadingScreen(std::string path);
+		void loadingScreen(std::string path);
 
-    void addObject(PhysicsObject* obj);
+		void addObject(PhysicsObject* obj);
 
-    void addTexture(DisplayTexture* texture, bool background = false);
+		void addTexture(DisplayTexture* texture, bool background = false);
 
-    void setFullscreen(bool set = true);
+		void setFullscreen(bool set = true);
 
-    bool saveFrame(std::string filepath);
+		bool saveFrame(std::string filepath);
 
 };
 
