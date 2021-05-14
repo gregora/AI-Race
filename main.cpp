@@ -232,11 +232,11 @@ class Car {
 				}
 
 				if (velocity > 1) {
-					if (network -> output_nodes[2] > 0.5) {
+					if (network -> output_nodes[2] > 0) {
 						car -> body -> ApplyTorque(turning_coef, true);
 					}
 
-					if (network -> output_nodes[3] > 0.5) {
+					if (network -> output_nodes[3] > 0) {
 						car -> body -> ApplyTorque(-turning_coef, true);
 					}
 				}
@@ -579,8 +579,7 @@ int main() {
 		// initial mutation
 		for (int i = 0; i < number_of_cars; i++) {
 			networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
-			for (int j = 0; j < 100; j++)
-				networks[i] -> mutate(1);
+			networks[i] -> randomize_edges(0.6, 0.7, 0.8);
 
 		}
 	} else {
@@ -675,7 +674,7 @@ int main() {
 				networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
 				networks[i] -> load("saves/race" + to_string(race_index) + "/"+to_string(i + 1 - number_of_cars / 2) + ".AI");
 
-				for (int j = 0; j < 20*randDouble() + 1; j++) {
+				for (int j = 0; j < 200*randDouble(); j++) {
 					networks[i] -> mutate(1);
 				}
 

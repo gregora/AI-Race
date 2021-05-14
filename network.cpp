@@ -25,7 +25,9 @@ double Network::random() {
 
 // sigmoid function approximation
 double Network::sigmoid(double in) {
-	return in / (1 + abs(in));
+	//return in / (1 + abs(in));
+	return tanh(in);
+
 }
 
 // set input nodes
@@ -97,6 +99,45 @@ void Network::reset_edges() {
 
 
 }
+
+
+void Network::randomize_edges(float val1, float val2, float val3) {
+
+	input_edges.clear();
+	hidden_edges.clear();
+	output_edges.clear();
+
+	// set input edges
+	for (int x = 0; x < pils; x++) {
+		input_edges.push_back({});
+		for (int y = 0; y < phls; y++) {
+			input_edges[x].push_back(2*val1*random() - val1);
+		}
+
+	}
+
+	// set hidden edges
+	for (int x = 0; x < phln - 1; x++) {
+		hidden_edges.push_back({});
+		for (int y = 0; y < phls; y++) {
+			hidden_edges[x].push_back({});
+			for (int z = 0; z < phls; z++) {
+				hidden_edges[x][y].push_back(2*val2*random() - val2);
+			}
+		}
+	}
+
+	// set output edges
+	for (int x = 0; x < phls; x++) {
+		output_edges.push_back({});
+		for (int y = 0; y < pols; y++) {
+			output_edges[x].push_back(2*val3*random() - val3);
+		}
+	}
+
+
+}
+
 
 // randomly change an edge (used in genetic algorithms)
 void Network::mutate(int amount) {
