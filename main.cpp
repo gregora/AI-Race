@@ -147,7 +147,7 @@ b2Vec2 * fileToChain(std::string path, int * number_of_edges = nullptr) {
 class Car {
 
 	public:
-		float rays[NUMBER_OF_RAYS];
+		float rays[2*NUMBER_OF_RAYS];
 		PhysicsObject * car;
 		b2World* world = nullptr;
 		bool human_controlled = false;
@@ -206,14 +206,14 @@ class Car {
 				float x = ppos[0];
 				float y = ppos[1];
 
-				double input[NUMBER_OF_RAYS + 1];
+				double input[2*NUMBER_OF_RAYS + 1];
 
-				for (int i = 0; i < NUMBER_OF_RAYS; i++) {
+				for (int i = 0; i < 2*NUMBER_OF_RAYS; i++) {
 					input[i] = rays[i];
 				}
 
 
-				input[NUMBER_OF_RAYS] = angle;
+				input[2*NUMBER_OF_RAYS] = angle;
 
 				network -> set_input_nodes(input);
 				network -> forward_propagate();
@@ -271,28 +271,34 @@ class Car {
 				b2Vec2 p2 = b2Vec2(cos(car_angle + angle_fraction*i) * RAY_LENGTH, sin(car_angle + angle_fraction*i) * RAY_LENGTH);
 
 				input.p2 = input.p1 + p2;
-				float max_fraction = 1;
+				float max_fraction_1 = 1;
+				float max_fraction_2 = 1;
 
 				for (b2Body* b = world->GetBodyList(); b; b = b->GetNext()) {
 					for (b2Fixture* f = b->GetFixtureList(); f; f = f->GetNext()) {
-
-						if (f -> GetFilterData().categoryBits == (uint16) 1 || COLLISIONS) {
 
 							for (int j = 0; j < f -> GetShape() -> GetChildCount(); j++) {
 								b2RayCastOutput output;
 								output.fraction = 10;
 								f -> RayCast(&output, input, j);
 
-								if (max_fraction > output.fraction && output.fraction > 0) {
-									max_fraction = output.fraction;
+								if (f -> GetFilterData().categoryBits == (uint16) 1){
+									if (max_fraction_1 > output.fraction && output.fraction > 0) {
+										max_fraction_1 = output.fraction;
+									}
+								}else{
+									if (max_fraction_2 > output.fraction && output.fraction > 0) {
+										max_fraction_2 = output.fraction;
+									}
 								}
 
-							}
+
 						}
 					}
 				}
 
-				rays[i] = max_fraction;
+				rays[i] = max_fraction_1;
+				rays[i + NUMBER_OF_RAYS] = max_fraction_2;
 			}
 
 		}
@@ -352,10 +358,10 @@ void race(int number_of_cars, Network* networks[], float * scores, int race_leng
 		y = 15*i - 150;
 
 
-		if (!COLLISIONS) {
+		/*if (!COLLISIONS) {
 			x = 238;
 			y = -150;
-		}
+		}*/
 
 		starting_positions[i][0] = x;
 		starting_positions[i][1] = y;
@@ -578,7 +584,7 @@ int main() {
 
 		// initial mutation
 		for (int i = 0; i < number_of_cars; i++) {
-			networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
+			networks[i] = new Network(2*NUMBER_OF_RAYS + 1, 2, 5, 4);
 			networks[i] -> randomize_edges(0.6, 0.7, 0.8);
 
 		}
@@ -587,7 +593,7 @@ int main() {
 
 		for (int i = 0; i < number_of_cars; i++) {
 
-			networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
+			networks[i] = new Network(2*NUMBER_OF_RAYS + 1, 2, 5, 4);
 			networks[i] -> load("saves/race" + to_string(stoi(command)) + "/"+to_string(i + 1) + ".AI");
 		}
 
@@ -622,9 +628,9 @@ int main() {
 		// evaluation
 		int evaluation_steps = number_of_cars;
 
-		if (!COLLISIONS) {
+		/*if (!COLLISIONS) {
 			evaluation_steps = 1;
-		}
+		}*/
 
 		for (int r = 0; r < evaluation_steps; r++) {
 
@@ -665,13 +671,13 @@ int main() {
 
 			if (i < number_of_cars / 2) {
 				// keep the old ones
-				networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
+				networks[i] = new Network(2*NUMBER_OF_RAYS + 1, 2, 5, 4);
 				networks[i] -> load("saves/race" + to_string(race_index) + "/"+to_string(i + 1) + ".AI");
 
 
 			} else {
 				// mutate
-				networks[i] = new Network(NUMBER_OF_RAYS + 1, 2, 5, 4);
+				networks[i] = new Network(2*NUMBER_OF_RAYS + 1, 2, 5, 4);
 				networks[i] -> load("saves/race" + to_string(race_index) + "/"+to_string(i + 1 - number_of_cars / 2) + ".AI");
 
 				for (int j = 0; j < 200*randDouble(); j++) {
