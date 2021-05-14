@@ -83,6 +83,7 @@ Display::Display(int w, int h, char title[], float pixelspermeter, bool create_w
 	const char* tit = title;
 
 	SDL_Init(SDL_INIT_VIDEO);
+	SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0"); // fixes compositor crash
 
 	window_width = w;
 	window_height = h;

@@ -336,220 +336,220 @@ void CallUpdate(Car * car) {
 
 void race(int number_of_cars, Network* networks[], float * scores, int race_length, bool record = false) {
 
-		b2Vec2 gravity(0.0f, 0.0f);
-		b2World world(gravity);
+	b2Vec2 gravity(0.0f, 0.0f);
+	b2World world(gravity);
 
-		float starting_positions[number_of_cars][2];
+	float starting_positions[number_of_cars][2];
 
-		for (int i = 0; i < number_of_cars; i++) {
-			float x, y;
-			if (i % 2 == 0) {
-				x = 232;
-			} else {
-				x = 244;
-			}
-
-			y = 15*i - 150;
-
-
-			if (!COLLISIONS) {
-				x = 238;
-				y = -150;
-			}
-
-			starting_positions[i][0] = x;
-			starting_positions[i][1] = y;
-
-		}
-
-		int display_height, display_width;
-
-		if (record) {
-			display_width = 1920;
-			display_height = 1080;
+	for (int i = 0; i < number_of_cars; i++) {
+		float x, y;
+		if (i % 2 == 0) {
+			x = 232;
 		} else {
-			display_width = 1000;
-			display_height = 600;
+			x = 244;
 		}
 
-		Display* display = new Display(display_width, display_height, "A.I. Race", 10, DISPLAY);
-		// display -> setFullscreen(true);
-		SDL_SetRenderDrawBlendMode(display -> renderer, SDL_BLENDMODE_BLEND);
+		y = 15*i - 150;
 
-
-		// add field
-		PhysicsObject groundBody(&world, 0, 0);
-		groundBody.setType(b2_staticBody);
-		b2Fixture * fix = groundBody.body -> GetFixtureList();
-		groundBody.body -> DestroyFixture(fix);
-
-		b2Filter filt;
-
-		filt.categoryBits = (uint16) 1;
-		filt.maskBits = (uint16) -1;
-
-
-
-		int edges;
-		b2ChainShape chain;
-		b2Vec2 * box = fileToChain("track/track-outer.ch", &edges);
-		chain.CreateLoop(box, edges);
-		b2Fixture * f1 = groundBody.body -> CreateFixture(&chain, 1);
-
-		int edges2;
-		b2ChainShape chain2;
-		b2Vec2 * box2 = fileToChain("track/track-inner.ch", &edges2);
-		chain2.CreateLoop(box2, edges2);
-		b2Fixture * f2 = groundBody.body -> CreateFixture(&chain2, 1);
 
 		if (!COLLISIONS) {
-			f1 -> SetFilterData(filt);
-			f2 -> SetFilterData(filt);
+			x = 238;
+			y = -150;
 		}
+
+		starting_positions[i][0] = x;
+		starting_positions[i][1] = y;
+
+	}
+
+	int display_height, display_width;
+
+	if (record) {
+		display_width = 1920;
+		display_height = 1080;
+	} else {
+		display_width = 1000;
+		display_height = 600;
+	}
+
+	Display* display = new Display(display_width, display_height, "A.I. Race", 10, DISPLAY);
+	// display -> setFullscreen(true);
+	SDL_SetRenderDrawBlendMode(display -> renderer, SDL_BLENDMODE_BLEND);
+
+
+	// add field
+	PhysicsObject groundBody(&world, 0, 0);
+	groundBody.setType(b2_staticBody);
+	b2Fixture * fix = groundBody.body -> GetFixtureList();
+	groundBody.body -> DestroyFixture(fix);
+
+	b2Filter filt;
+
+	filt.categoryBits = (uint16) 1;
+	filt.maskBits = (uint16) -1;
+
+
+
+	int edges;
+	b2ChainShape chain;
+	b2Vec2 * box = fileToChain("track/track-outer.ch", &edges);
+	chain.CreateLoop(box, edges);
+	b2Fixture * f1 = groundBody.body -> CreateFixture(&chain, 1);
+
+	int edges2;
+	b2ChainShape chain2;
+	b2Vec2 * box2 = fileToChain("track/track-inner.ch", &edges2);
+	chain2.CreateLoop(box2, edges2);
+	b2Fixture * f2 = groundBody.body -> CreateFixture(&chain2, 1);
+
+	if (!COLLISIONS) {
+		f1 -> SetFilterData(filt);
+		f2 -> SetFilterData(filt);
+	}
+
+
+	if (DISPLAY) {
+		// render ring
+		int tex_w = 15000;
+		groundBody.texture = SDL_CreateTexture(display -> renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, tex_w, tex_w);
+
+		SDL_SetRenderTarget(display -> renderer, groundBody.texture);
+		SDL_SetTextureBlendMode(groundBody.texture, SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawColor(display -> renderer, 0, 0, 0, 0);
+		SDL_RenderClear(display -> renderer);
+		SDL_SetRenderDrawColor(display -> renderer, 255, 255, 255, 255);
+
+		for (int i = 0; i < edges; i++) {
+			if (i < edges - 1) {
+				SDL_RenderDrawLine((*display).renderer, tex_w/2 + box[i].x*10, tex_w/2 - box[i].y*10, tex_w/2 + box[i + 1].x*10, tex_w/2 - box[i + 1].y*10);
+			} else {
+				SDL_RenderDrawLine((*display).renderer, tex_w/2 + box[i].x*10, tex_w/2 - box[i].y*10, tex_w/2 + box[0].x*10, tex_w/2 - box[0].y*10);
+			}
+		}
+
+		for (int i = 0; i < edges2; i++) {
+			if (i < edges2 - 1) {
+				SDL_RenderDrawLine((*display).renderer, tex_w/2 + box2[i].x*10, tex_w/2 - box2[i].y*10, tex_w/2 + box2[i + 1].x*10, tex_w/2 - box2[i + 1].y*10);
+			} else {
+				SDL_RenderDrawLine((*display).renderer, tex_w/2 + box2[i].x*10, tex_w/2 - box2[i].y*10, tex_w/2 + box2[0].x*10, tex_w/2 - box2[0].y*10);
+			}
+		}
+
+
+		SDL_SetRenderTarget(display -> renderer, NULL);
+	}
+
+
+		DisplayTexture * rays_texture = new DisplayTexture("", display -> renderer);
+		delete rays_texture -> texture;
+		rays_texture -> texture = SDL_CreateTexture(display -> renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
+
+
+		// add objects to display
+		display -> addObject(&groundBody);
+		display -> addTexture(rays_texture, true);
+
+
+	Car * cars[number_of_cars];
+
+	for (int i = 0; i < number_of_cars; i++) {
+		cars[i] = new Car(&world, display, starting_positions[i][0], starting_positions[i][1]);
+		cars[i] -> network = networks[i];
+
+
+		if (!COLLISIONS) {
+			b2Filter * car_filt = new b2Filter();
+			car_filt -> maskBits = (uint16) 1;
+			car_filt -> categoryBits = (uint16) pow(2, i+2);
+			cars[i] -> car -> body -> GetFixtureList() -> SetFilterData(*car_filt);
+		}
+
+
+		display -> addObject(cars[i] -> car);
+	}
+
+	cars[0] -> human_controlled = FIRST_CAR_HUMAN_CONTROLLED;
+
+	int frame = 0;
+
+	while (true) {
+		frame++;
+
+		thread threads[number_of_cars];
+
+		for (int i = 0; i < number_of_cars; i++) {
+			// CallUpdate(cars[i]);
+			threads[i] = thread(CallUpdate, cars[i]);
+		}
+
+		bool allcrashed = true;
+
+		for (int i = 0; i < number_of_cars; i++) {
+			threads[i].join();
+			if (!cars[i] -> crashed)
+				allcrashed = false;
+		}
+
+		if (allcrashed)
+			break;
+
 
 
 		if (DISPLAY) {
-			// render ring
-			int tex_w = 15000;
-			groundBody.texture = SDL_CreateTexture(display -> renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, tex_w, tex_w);
 
-			SDL_SetRenderTarget(display -> renderer, groundBody.texture);
-			SDL_SetTextureBlendMode(groundBody.texture, SDL_BLENDMODE_BLEND);
-			SDL_SetRenderDrawColor(display -> renderer, 0, 0, 0, 0);
+			SDL_SetRenderTarget((*display).renderer, rays_texture -> texture);
+			SDL_SetTextureBlendMode(rays_texture -> texture, SDL_BLENDMODE_BLEND);
+			SDL_SetRenderDrawColor((*display).renderer, 0, 0, 0, 0);
 			SDL_RenderClear(display -> renderer);
-			SDL_SetRenderDrawColor(display -> renderer, 255, 255, 255, 255);
+			SDL_SetRenderDrawColor((*display).renderer, 255, 255, 255, 255);
 
-			for (int i = 0; i < edges; i++) {
-				if (i < edges - 1) {
-					SDL_RenderDrawLine((*display).renderer, tex_w/2 + box[i].x*10, tex_w/2 - box[i].y*10, tex_w/2 + box[i + 1].x*10, tex_w/2 - box[i + 1].y*10);
-				} else {
-					SDL_RenderDrawLine((*display).renderer, tex_w/2 + box[i].x*10, tex_w/2 - box[i].y*10, tex_w/2 + box[0].x*10, tex_w/2 - box[0].y*10);
-				}
-			}
+			float angle_fraction = 3.14 / (NUMBER_OF_RAYS - 1);
 
-			for (int i = 0; i < edges2; i++) {
-				if (i < edges2 - 1) {
-					SDL_RenderDrawLine((*display).renderer, tex_w/2 + box2[i].x*10, tex_w/2 - box2[i].y*10, tex_w/2 + box2[i + 1].x*10, tex_w/2 - box2[i + 1].y*10);
-				} else {
-					SDL_RenderDrawLine((*display).renderer, tex_w/2 + box2[i].x*10, tex_w/2 - box2[i].y*10, tex_w/2 + box2[0].x*10, tex_w/2 - box2[0].y*10);
-				}
-			}
+			for (int i = 0; i < NUMBER_OF_RAYS; i++) {
+				float car_angle = cars[0] -> car -> body -> GetAngle();
+				b2Vec2 p2 = b2Vec2(cos(car_angle + angle_fraction*i) * RAY_LENGTH * 10, sin(car_angle + angle_fraction*i) * RAY_LENGTH * 10);
 
-
-			SDL_SetRenderTarget(display -> renderer, NULL);
-		}
-
-
-			DisplayTexture * rays_texture = new DisplayTexture("", display -> renderer);
-			delete rays_texture -> texture;
-			rays_texture -> texture = SDL_CreateTexture(display -> renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 1000, 1000);
-
-
-			// add objects to display
-			display -> addObject(&groundBody);
-			display -> addTexture(rays_texture, true);
-
-
-		Car * cars[number_of_cars];
-
-		for (int i = 0; i < number_of_cars; i++) {
-			cars[i] = new Car(&world, display, starting_positions[i][0], starting_positions[i][1]);
-			cars[i] -> network = networks[i];
-
-
-			if (!COLLISIONS) {
-				b2Filter * car_filt = new b2Filter();
-				car_filt -> maskBits = (uint16) 1;
-				car_filt -> categoryBits = (uint16) pow(2, i+2);
-				cars[i] -> car -> body -> GetFixtureList() -> SetFilterData(*car_filt);
-			}
-
-
-			display -> addObject(cars[i] -> car);
-		}
-
-		cars[0] -> human_controlled = FIRST_CAR_HUMAN_CONTROLLED;
-
-		int frame = 0;
-
-		while (true) {
-			frame++;
-
-			thread threads[number_of_cars];
-
-			for (int i = 0; i < number_of_cars; i++) {
-				// CallUpdate(cars[i]);
-				threads[i] = thread(CallUpdate, cars[i]);
-			}
-
-			bool allcrashed = true;
-
-			for (int i = 0; i < number_of_cars; i++) {
-				threads[i].join();
-				if (!cars[i] -> crashed)
-					allcrashed = false;
-			}
-
-			if (allcrashed)
-				break;
-
-
-
-			if (DISPLAY) {
-
-				SDL_SetRenderTarget((*display).renderer, rays_texture -> texture);
-				SDL_SetTextureBlendMode(rays_texture -> texture, SDL_BLENDMODE_BLEND);
-				SDL_SetRenderDrawColor((*display).renderer, 0, 0, 0, 0);
-				SDL_RenderClear(display -> renderer);
-				SDL_SetRenderDrawColor((*display).renderer, 255, 255, 255, 255);
-
-				float angle_fraction = 3.14 / (NUMBER_OF_RAYS - 1);
-
-				for (int i = 0; i < NUMBER_OF_RAYS; i++) {
-					float car_angle = cars[0] -> car -> body -> GetAngle();
-					b2Vec2 p2 = b2Vec2(cos(car_angle + angle_fraction*i) * RAY_LENGTH * 10, sin(car_angle + angle_fraction*i) * RAY_LENGTH * 10);
-
-					SDL_RenderDrawLine((*display).renderer, 500, 500, 500 + p2.x*(cars[0] -> rays[i]), 500 - p2.y*cars[0] -> rays[i]);
-
-				}
-
-				SDL_SetRenderTarget((*display).renderer, NULL);
+				SDL_RenderDrawLine((*display).renderer, 500, 500, 500 + p2.x*(cars[0] -> rays[i]), 500 - p2.y*cars[0] -> rays[i]);
 
 			}
 
-			b2Vec2 position = cars[0] -> car -> body -> GetPosition();
-
-			/*if (DISPLAY) {
-				cout << cars[0] -> score << endl;
-			}*/
-
-			display -> camerax = position.x;
-			display -> cameray = position.y;
-
-			world.Step(1.0f/60.0f, 6, 2);
-			display -> render(DISPLAY);
-
-			if (record)
-				display -> saveFrame("recording/" + to_string(frame) + ".png");
-
-			if (frame >= race_length*60) {
-				break;
-			}
+			SDL_SetRenderTarget((*display).renderer, NULL);
 
 		}
 
-		SDL_DestroyRenderer(display -> renderer);
+		b2Vec2 position = cars[0] -> car -> body -> GetPosition();
 
-		for (int i = 0; i < number_of_cars; i++) {
-			scores[i] += cars[i] -> score;
-			SDL_DestroyTexture(cars[i] -> car -> texture);
-			delete cars[i];
+		/*if (DISPLAY) {
+			cout << cars[0] -> score << endl;
+		}*/
+
+		display -> camerax = position.x;
+		display -> cameray = position.y;
+
+		world.Step(1.0f/60.0f, 6, 2);
+		display -> render(DISPLAY);
+
+		if (record)
+			display -> saveFrame("recording/" + to_string(frame) + ".png");
+
+		if (frame >= race_length*60) {
+			break;
 		}
 
-		SDL_DestroyTexture(groundBody.texture);
-		SDL_DestroyTexture(rays_texture -> texture);
-		SDL_DestroyWindow(display -> window);
-		delete display;
+	}
+
+	SDL_DestroyRenderer(display -> renderer);
+
+	for (int i = 0; i < number_of_cars; i++) {
+		scores[i] += cars[i] -> score;
+		SDL_DestroyTexture(cars[i] -> car -> texture);
+		delete cars[i];
+	}
+
+	SDL_DestroyTexture(groundBody.texture);
+	SDL_DestroyTexture(rays_texture -> texture);
+	SDL_DestroyWindow(display -> window);
+	delete display;
 
 }
 
